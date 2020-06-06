@@ -2,24 +2,34 @@ var database;
 
 var drawing = [];
 var currentPath = [];
+var isDrawing=false;
 
 function setup(){
-  canvas = createCanvas(1400,700);
-  canvas.mousePressed(startPath);
-  //canvas.mouseReleased(endPath);
+  canvas = createCanvas(1000,600);
   database = firebase.database();
- 
+
+  canvas.mousePressed(startPath);
+  canvas.mouseReleased(endPath);
+
+  form=new Form();
+  form.display();
+
 }
 
 function startPath() {
+  isDrawing=true;
   currentPath = [];
   drawing.push(currentPath);
 }
 
+function endPath(){
+  isDrawing=false;
+}
+
 function draw() {
-  background(0,100);
+  background("black");
   
-  if(mouseIsPressed) {
+  if(isDrawing) {
     var point = {
      x: mouseX,
      y: mouseY 
@@ -41,14 +51,25 @@ function draw() {
    endShape();
   }
 
-  if(beginShape()){
-    drawing.update();
-  }
-
-  function update(){
-    var drawingIndex = "drawing"
-    database.ref(drawingIndex).set({ 
-    });
-  }
+  form.button.mousePressed(()=>{
+    saveDrawing();
+  });
 
 }
+
+  function saveDrawing(){
+    var ref = database.ref('drawing');
+
+    var data = {
+       name:"agastya",
+       drawing:drawing 
+      } 
+      var result = ref.push(data,dataSent);
+
+      console.log(status);
+
+      function dataSent(status){
+        console.log(status);
+      }
+   }
+
